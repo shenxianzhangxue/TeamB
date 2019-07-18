@@ -6,8 +6,8 @@
 |张雪|[csdn]()|
 |周子毅|[csdn]()|
 |孙首勋|[csdn]()|
-|朱一琛|[csdn]()|
-|马艺诚|[csdn]()|
+|朱一琛|[csdn](https://yaoer.me/)|
+|马艺诚|[csdn](https://blog.csdn.net/ghorge)|
 |胡锦雲|[csdn](https://blog.csdn.net/kkkkde)|
 
 ----------
