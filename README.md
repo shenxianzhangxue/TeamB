@@ -5,7 +5,7 @@
 |:------|:------|
 |张雪|[csdn](https://blog.csdn.net/qq_43923676)|
 |周子毅|[csdn](https://me.csdn.net/weixin_43204126)|
-|孙首勋|[csdn](https://me.csdn.net/weixin_43204126)|
+|孙首勋|[csdn](https://me.csdn.net/weixin_43574962)|
 |朱一琛|[csdn](https://yaoer.me/)|
 |马艺诚|[csdn](https://blog.csdn.net/ghorge)|
 |胡锦雲|[csdn](https://blog.csdn.net/kkkkde)|
