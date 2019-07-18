@@ -3,8 +3,8 @@
 
 |姓名    | csdn | 
 |:------|:------|
-|张雪|[csdn]()|
-|周子毅|[csdn]()|
+|张雪|[csdn](https://blog.csdn.net/qq_43923676)|
+|周子毅|[csdn](https://me.csdn.net/weixin_43204126)|
 |孙首勋|[csdn]()|
 |朱一琛|[csdn](https://yaoer.me/)|
 |马艺诚|[csdn](https://blog.csdn.net/ghorge)|
