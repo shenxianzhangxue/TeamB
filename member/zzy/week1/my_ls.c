@@ -165,6 +165,89 @@ void display_single(struct stat buf, char *name){
 }
 
 
+// 打印所读取文件的信息
+void display_dir2(DIR* ret_opendir)
+{
+    int i = 0;
+    struct dirent* ret_readdir = NULL; // 定义readdir函数返回的结构体变量
+    while((ret_readdir = readdir(ret_opendir))) // 判断是否读取到目录尾
+    {
+        char* filename = ret_readdir->d_name; // 获取文件名
+        if(i == 5){
+            printf("\n");
+        }
+        if(filename[0]!='.'){ // 不输出当前目录、上一级目录与隐藏文件 
+            printf("%s\t",ret_readdir->d_name); // 打印文件名
+            i++;
+        }
+    }
+    printf("\n");
+    rewinddir(ret_opendir); // 非常重要，将文件流的指针拨回起始位置
+    
+    //puts("");
+    //puts("");
+}
+
+
+// 处理错误
+void error_printf(const char* funname)
+{
+    perror(funname);
+    exit(EXIT_FAILURE);
+}
+
+// 读取路径下的文件
+int a = 1;
+void list_dir(const char* pathname)
+{
+    char nextpath[PATH_MAX+1];
+
+    DIR* ret_opendir = opendir(pathname); // 打开目录"pathname"
+    if(ret_opendir == NULL)
+        error_printf("opendir");
+    
+    printf("%s:\n",pathname); // 显示pathname目录路径
+    display_dir2(ret_opendir); // 显示pathname目录下所有非隐藏文件名称
+    
+    //printf("\nsssssssss%d\n",a++);
+    
+    struct dirent* ret_readdir = NULL; // 定义readdir函数返回的结构体变量
+    while((ret_readdir = readdir(ret_opendir))) // 判断是否读取到目录尾
+    {
+        //printf("ssss");
+        char* filename = ret_readdir->d_name; // 获取文件名
+
+        int end = 0; // 优化显示路径（处理"./test/"与"./test"）
+        while(pathname[end])
+            end++;
+        strcpy(nextpath,pathname);
+        if(pathname[end-1] != '/')
+            strcat(nextpath,"/");
+        strcat(nextpath,filename);
+
+        struct stat file_message = {}; // 定义stat函数返回的结构体变量
+        int ret_stat = lstat(nextpath, &file_message); // 获取文件信息
+        
+        //printf("\npath = %s\nfilename = %s\n%daaaa%d\n",nextpath,filename,S_ISDIR(file_message.st_mode),filename[0]!='.');
+        if(ret_stat == -1) // stat读取文件错误则输出提示信息
+            printf("%s error!", filename);
+        else if(S_ISDIR(file_message.st_mode)  && filename[0]!='.') // 筛选"."、".."与隐藏>
+        {
+            //printf("\n--%s--\n",filename);
+            list_dir(nextpath);
+        }
+    }
+    closedir(ret_opendir);
+}
+
+
+
+
+
+
+
+
+
 //根据命令行参数和完整路径名显示目标文件
 //参数flag: 命令行参数
 //参数pathname：包含了文件名和路径名
@@ -199,8 +282,8 @@ void display(int flag,char *pathname){
             display_single(buf,name);
             break;
         case PARAM_L:
-        case PARAM_R:
-        case PARAM_L + PARAM_R:
+        //case PARAM_R:
+        //case PARAM_L + PARAM_R:
             if(name[0] != '.'){
                 display_arttribute(buf,name);
                 printf("  ");
@@ -210,13 +293,22 @@ void display(int flag,char *pathname){
             }
             break;
         case PARAM_A + PARAM_L:
-        case PARAM_A + PARAM_R:
-        case PARAM_A + PARAM_L + PARAM_R:
+        //case PARAM_A + PARAM_R:
+        //case PARAM_A + PARAM_L + PARAM_R:
             display_arttribute(buf,name);
             printf("  ");
             print_bycolor(buf,name);
             printf("\n");
             //printf(" %-s\n",name);
+            break;
+        case PARAM_R:
+            //printf("%s\n\n\n",name);
+            if(S_ISDIR(buf.st_mode) && name[1] != '.') 
+                list_dir(name);
+            //if(S_ISDIR(buf.st_mode)  && name[0]!='.')
+            //printf("\n--%s--\n",name);
+            break;
+        default:
             break;
     }
 }
@@ -224,10 +316,9 @@ void display(int flag,char *pathname){
 void display_dir(int flag_param,char *path){    //显示目录
     DIR *dir;
     struct dirent *ptr;
-    struct stat buf;
+    //struct stat buf;
     int count = 0;
-    char 
-filenames[256][PATH_MAX+1],temp[PATH_MAX+1];
+    char filenames[256][PATH_MAX+1],temp[PATH_MAX+1];
     
     //获取该目录下文件总数和最长的文件名
     dir  = opendir(path);
@@ -273,31 +364,10 @@ filenames[256][PATH_MAX+1],temp[PATH_MAX+1];
             }
         }
     }
-
-    for(int i = 0;i < count;i++){
-        display(flag_param,filenames[i]);
-        if(flag_param == PARAM_R){
-            if(stat(filenames[i],&buf) == -1){
-                my_err("stat",__LINE__);
-            }
-        
-            if(S_ISDIR(buf.st_mode)){   //filenames[i]是一个目录
-                //如果目录的最后一个字符不是'/'，就加上'/'
-                if(filenames[i][strlen(filenames[i]) - 1] != '/'){                                                                                          
-                    filenames[i][strlen(filenames[i])] = '/';
-                    filenames[i][strlen(filenames[i])+1] = '\0';
-                }
-                else{
-                    filenames[i][strlen(filenames[i])] = '\0';
-                }
-   
-                display_dir(flag_param,filenames[i]);
-                i++;
-            }
-        }
-    }
-
-
+    
+       for(int i = 0;i < count;i++){
+            display(flag_param,filenames[i]);
+       }
 
     closedir(dir);
 
